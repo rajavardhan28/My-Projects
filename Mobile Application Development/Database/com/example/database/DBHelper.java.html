@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>DBHelper.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+DBHelper.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.database</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Context</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.database.sqlite.SQLiteDatabase</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.database.sqlite.SQLiteOpenHelper</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.Nullable</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">DBHelper  </span><span class="s0">extends </span><span class="s1">SQLiteOpenHelper {</span>
+    <span class="s0">public </span><span class="s1">DBHelper(@Nullable Context context</span><span class="s0">, </span><span class="s1">@Nullable String name</span><span class="s0">, </span><span class="s1">@Nullable SQLiteDatabase.CursorFactory factory</span><span class="s0">, int </span><span class="s1">version) {</span>
+        <span class="s0">super</span><span class="s1">(context</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">factory</span><span class="s0">, </span><span class="s1">version)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">onCreate(SQLiteDatabase sqLiteDatabase) {</span>
+        <span class="s1">sqLiteDatabase.execSQL(</span><span class="s2">&quot;create table Student(name varchar(10),rollno varchar(10))&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">onUpgrade(SQLiteDatabase sqLiteDatabase</span><span class="s0">, int </span><span class="s1">i</span><span class="s0">, int </span><span class="s1">i1) {</span>
+
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

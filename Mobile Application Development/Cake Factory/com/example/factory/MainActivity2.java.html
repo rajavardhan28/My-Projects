@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>MainActivity2.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity2.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.factory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Intent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.TextView</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">MainActivity2 </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState)</span><span class="s0">;</span>
+        <span class="s1">setContentView(R.layout.activity_main2)</span><span class="s0">;</span>
+        <span class="s1">TextView tv=findViewById(R.id.textView2)</span><span class="s0">;</span>
+        <span class="s1">Intent i2 =getIntent()</span><span class="s0">;</span>
+        <span class="s1">String flavor=i2.getStringExtra(</span><span class="s2">&quot;Flavour&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">String date=i2.getStringExtra(</span><span class="s2">&quot;Date&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">String time=i2.getStringExtra(</span><span class="s2">&quot;Time&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">tv.setText(</span><span class="s2">&quot;Flavour:&quot;</span><span class="s1">+flavor+</span><span class="s2">&quot;</span><span class="s0">\n </span><span class="s2">Date:&quot;</span><span class="s1">+date+</span><span class="s2">&quot;</span><span class="s0">\n </span><span class="s2">Time&quot;</span><span class="s1">+time)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

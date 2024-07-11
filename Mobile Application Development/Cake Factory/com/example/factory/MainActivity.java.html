@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>MainActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.factory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">android.app.DatePickerDialog</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.app.TimePickerDialog</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.content.Intent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.View</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.ArrayAdapter</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.Button</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.DatePicker</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.EditText</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.ImageView</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.Spinner</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.SpinnerAdapter</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.widget.TimePicker</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.util.Calendar</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">MainActivity </span><span class="s0">extends </span><span class="s1">AppCompatActivity {</span>
+
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState)</span><span class="s0">;</span>
+        <span class="s1">setContentView(R.layout.activity_main)</span><span class="s0">;</span>
+        <span class="s1">Button btn=findViewById(R.id.button)</span><span class="s0">;</span>
+        <span class="s1">Spinner sp=findViewById(R.id.spinner)</span><span class="s0">;</span>
+        <span class="s1">EditText date=findViewById(R.id.date)</span><span class="s0">;</span>
+        <span class="s1">EditText time=findViewById(R.id.time)</span><span class="s0">;</span>
+        <span class="s1">ImageView calender=findViewById(R.id.imageView)</span><span class="s0">;</span>
+        <span class="s1">ImageView clock=findViewById(R.id.imageView2)</span><span class="s0">;</span>
+        <span class="s1">String [] Flavours={</span><span class="s2">&quot;Vanilla&quot;</span><span class="s0">,</span><span class="s2">&quot;Strawberry&quot;</span><span class="s0">,</span><span class="s2">&quot;Red Velvet&quot;</span><span class="s0">,</span><span class="s2">&quot;Blue Berry&quot;</span><span class="s1">}</span><span class="s0">;</span>
+        <span class="s1">ArrayAdapter ad=</span><span class="s0">new </span><span class="s1">ArrayAdapter(</span><span class="s0">this, </span><span class="s1">android.R.layout.simple_spinner_item</span><span class="s0">,</span><span class="s1">Flavours)</span><span class="s0">;</span>
+        <span class="s1">sp.setAdapter(ad)</span><span class="s0">;</span>
+        <span class="s1">calender.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View view) {</span>
+                <span class="s1">Calendar c=Calendar.getInstance()</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">pYear=c.get(Calendar.YEAR)</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">pMonth=c.get(Calendar.MONTH)</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">pDate=c.get(Calendar.DATE)</span><span class="s0">;</span>
+
+                <span class="s1">DatePickerDialog dailog=</span><span class="s0">new </span><span class="s1">DatePickerDialog(getApplicationContext()</span><span class="s0">, </span><span class="s1">android.R.style.Theme_DeviceDefault_DialogWhenLarge</span><span class="s0">, new </span><span class="s1">DatePickerDialog.OnDateSetListener() {</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onDateSet(DatePicker datePicker</span><span class="s0">, int </span><span class="s1">y</span><span class="s0">, int </span><span class="s1">m</span><span class="s0">, int </span><span class="s1">d) {</span>
+
+                    <span class="s1">}</span>
+                <span class="s1">}</span><span class="s0">,</span><span class="s1">pYear</span><span class="s0">,</span><span class="s1">pMonth</span><span class="s0">,</span><span class="s1">pDate)</span><span class="s0">;</span>
+                <span class="s1">showDialog()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">})</span><span class="s0">;</span>
+        <span class="s1">clock.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View view) {</span>
+                <span class="s1">Calendar c=Calendar.getInstance()</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">pHour=c.get(Calendar.HOUR)</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">pMinute=c.get(Calendar.MINUTE)</span><span class="s0">;</span>
+                <span class="s1">TimePickerDialog tdailog= </span><span class="s0">new </span><span class="s1">TimePickerDialog(getApplicationContext()</span><span class="s0">, </span><span class="s1">android.R.style.Theme_DeviceDefault_DialogWhenLarge</span><span class="s0">, new </span><span class="s1">TimePickerDialog.OnTimeSetListener() {</span>
+                    <span class="s1">@Override</span>
+                    <span class="s0">public void </span><span class="s1">onTimeSet(TimePicker timePicker</span><span class="s0">, int </span><span class="s1">h</span><span class="s0">, int </span><span class="s1">m) {</span>
+
+                    <span class="s1">}</span>
+                <span class="s1">}</span><span class="s0">,</span><span class="s1">pHour</span><span class="s0">,</span><span class="s1">pMinute</span><span class="s0">, false</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">})</span><span class="s0">;</span>
+        <span class="s1">btn.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">onClick(View view) {</span>
+                <span class="s1">String flavour=sp.getSelectedItem().toString()</span><span class="s0">;</span>
+                <span class="s1">String d=date.getText().toString()</span><span class="s0">;</span>
+                <span class="s1">String t=time.getText().toString()</span><span class="s0">;</span>
+                <span class="s1">Intent i=</span><span class="s0">new </span><span class="s1">Intent( </span><span class="s0">this, </span><span class="s1">MainActivity2.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">i.putExtra(</span><span class="s2">&quot;Flavour&quot;</span><span class="s0">,</span><span class="s1">flavour)</span><span class="s0">;</span>
+                <span class="s1">i.putExtra(</span><span class="s2">&quot;Date&quot;</span><span class="s0">,</span><span class="s1">d)</span><span class="s0">;</span>
+                <span class="s1">i.putExtra(</span><span class="s2">&quot;Time&quot;</span><span class="s0">,</span><span class="s1">t)</span><span class="s0">;</span>
+                <span class="s1">startActivity(i)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">})</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>
