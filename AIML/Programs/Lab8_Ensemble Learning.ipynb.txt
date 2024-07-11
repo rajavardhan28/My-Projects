@@ -1,0 +1,267 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "ztd7GdfUXcaW"
+   },
+   "source": [
+    "Question 1 : Implement the Bagging based Ensemble Model using CART (Classification and Regression Trees) as base learners. No. of base learners = 10\n",
+    "Use cross validation as the model estimation method. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "id": "vnR0ToQmXb8S",
+    "outputId": "f05bd61d-f367-4c4f-cf82-6df7ea915d43"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(768, 9)"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas \n",
+    "from sklearn import model_selection\n",
+    "from sklearn.ensemble import BaggingClassifier\n",
+    "from sklearn.tree import DecisionTreeClassifier \n",
+    "url = \"https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv\"\n",
+    "names = ['preg', 'plas','pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']\n",
+    "df = pandas.read_csv(url, names=names)\n",
+    "df.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "iLT1_rF3MzAm"
+   },
+   "source": [
+    "**The general procedure is as follows:**\n",
+    "\n",
+    "1. Shuffle the dataset randomly\n",
+    "2. Split the dataset into k groups\n",
+    "3. For each unique group:\n",
+    "4. Take the group as a hold out or test data set\n",
+    "5. Take the remaining groups as a training data set\n",
+    "6. Fit a model on the training set and evaluate it on the test set\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "id": "hZ5JNyyxhcCY",
+    "outputId": "269efaf5-6f7b-49a5-8e1e-f8f7dc779882"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Average Accuracy is  0.7525290498974709\n"
+     ]
+    }
+   ],
+   "source": [
+    "array = df.values\n",
+    "X = array[:, 0:8]\n",
+    "Y = array[:, 8]\n",
+    "#KFold method is used to divide the given dataset into multiple datasets.\n",
+    "Kfold = model_selection.KFold(n_splits=10, random_state=None)\n",
+    "cart = DecisionTreeClassifier()\n",
+    "num_trees = 10\n",
+    "model = BaggingClassifier(base_estimator=cart, n_estimators=num_trees,random_state=None)\n",
+    "results = model_selection.cross_val_score(model,X,Y, cv = Kfold)\n",
+    "average_accuracy = sum(results)/len(results)\n",
+    "print(\"Average Accuracy is \", average_accuracy)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "BQkpmli4qStQ"
+   },
+   "source": [
+    "Question 2 : Implement the AdaBoost Ensemble model for classification using 10 base learners and cross validation."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "id": "sy3MrrSgqgN9",
+    "outputId": "37086703-310e-46ef-b6a4-5fdff290bb72"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(768, 9)"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas \n",
+    "from sklearn import model_selection\n",
+    "from sklearn.ensemble import AdaBoostClassifier\n",
+    "from sklearn.tree import DecisionTreeClassifier\n",
+    "url = \"https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv\"\n",
+    "names = ['preg', 'plas','pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']\n",
+    "df = pandas.read_csv(url, names=names)\n",
+    "df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "id": "54gO7nlkq5xj",
+    "outputId": "73651f47-ca16-41e1-9627-ae2b63759725"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Average Accuracy is  0.7525974025974026\n"
+     ]
+    }
+   ],
+   "source": [
+    "array = df.values\n",
+    "X = array[:, 0:8]\n",
+    "Y = array[:, 8]\n",
+    "Kfold = model_selection.KFold(n_splits=10, random_state=None)\n",
+    "num_trees = 10\n",
+    "model = AdaBoostClassifier(n_estimators=num_trees,random_state=None)\n",
+    "results = model_selection.cross_val_score(model,X,Y, cv = Kfold)\n",
+    "average_accuracy = sum(results)/len(results)\n",
+    "print(\"Average Accuracy is \", average_accuracy)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "H5lKpxuOgYgV"
+   },
+   "source": [
+    "Question 3: (Same as Question 1) Implement the Bagging based Ensemble Model using k-Nearest Neighbor Classifier as base learners. No. of base learners = 100. Use cross validation as the model estimation method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "id": "C4VxQSI_frIm",
+    "outputId": "2ae79324-44a7-4850-f10d-5cee9997b33d"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(768, 9)"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas \n",
+    "from sklearn import model_selection\n",
+    "from sklearn.ensemble import BaggingClassifier\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "url = \"https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv\"\n",
+    "names = ['preg', 'plas','pres', 'skin', 'test', 'mass', 'pedi', 'age', 'class']\n",
+    "df = pandas.read_csv(url, names=names)\n",
+    "df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/"
+    },
+    "id": "uUc5VVMsftkv",
+    "outputId": "d6324547-a9e2-41e6-f219-dbb7f0227b60"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Average Accuracy is  0.721326042378674\n"
+     ]
+    }
+   ],
+   "source": [
+    "array = df.values\n",
+    "X = array[:, 0:8]\n",
+    "Y = array[:, 8]\n",
+    "Kfold = model_selection.KFold(n_splits=10, random_state=None)\n",
+    "knn = KNeighborsClassifier()\n",
+    "num_learners = 10\n",
+    "model = BaggingClassifier(base_estimator=knn, n_estimators=num_learners,random_state=None)\n",
+    "results = model_selection.cross_val_score(model,X,Y, cv = Kfold)\n",
+    "average_accuracy = sum(results)/len(results)\n",
+    "print(\"Average Accuracy is \", average_accuracy)"
+   ]
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "provenance": []
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}

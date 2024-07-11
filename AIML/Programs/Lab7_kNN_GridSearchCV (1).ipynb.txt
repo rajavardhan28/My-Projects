@@ -1,0 +1,668 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "Oz0UHWsoIVGE"
+   },
+   "source": [
+    "## Hyperparameter Tuning for kNN for Predicting Heart Disease "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "VMauWexaIhJp"
+   },
+   "source": [
+    "1. Import \"heart.csv\"."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 72,
+     "resources": {
+      "http://localhost:8080/nbextensions/google.colab/files.js": {
+       "data": "Ly8gQ29weXJpZ2h0IDIwMTcgR29vZ2xlIExMQwovLwovLyBMaWNlbnNlZCB1bmRlciB0aGUgQXBhY2hlIExpY2Vuc2UsIFZlcnNpb24gMi4wICh0aGUgIkxpY2Vuc2UiKTsKLy8geW91IG1heSBub3QgdXNlIHRoaXMgZmlsZSBleGNlcHQgaW4gY29tcGxpYW5jZSB3aXRoIHRoZSBMaWNlbnNlLgovLyBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKLy8KLy8gICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKLy8KLy8gVW5sZXNzIHJlcXVpcmVkIGJ5IGFwcGxpY2FibGUgbGF3IG9yIGFncmVlZCB0byBpbiB3cml0aW5nLCBzb2Z0d2FyZQovLyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAovLyBXSVRIT1VUIFdBUlJBTlRJRVMgT1IgQ09ORElUSU9OUyBPRiBBTlkgS0lORCwgZWl0aGVyIGV4cHJlc3Mgb3IgaW1wbGllZC4KLy8gU2VlIHRoZSBMaWNlbnNlIGZvciB0aGUgc3BlY2lmaWMgbGFuZ3VhZ2UgZ292ZXJuaW5nIHBlcm1pc3Npb25zIGFuZAovLyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCi8qKgogKiBAZmlsZW92ZXJ2aWV3IEhlbHBlcnMgZm9yIGdvb2dsZS5jb2xhYiBQeXRob24gbW9kdWxlLgogKi8KKGZ1bmN0aW9uKHNjb3BlKSB7CmZ1bmN0aW9uIHNwYW4odGV4dCwgc3R5bGVBdHRyaWJ1dGVzID0ge30pIHsKICBjb25zdCBlbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogIGVsZW1lbnQudGV4dENvbnRlbnQgPSB0ZXh0OwogIGZvciAoY29uc3Qga2V5IG9mIE9iamVjdC5rZXlzKHN0eWxlQXR0cmlidXRlcykpIHsKICAgIGVsZW1lbnQuc3R5bGVba2V5XSA9IHN0eWxlQXR0cmlidXRlc1trZXldOwogIH0KICByZXR1cm4gZWxlbWVudDsKfQoKLy8gTWF4IG51bWJlciBvZiBieXRlcyB3aGljaCB3aWxsIGJlIHVwbG9hZGVkIGF0IGEgdGltZS4KY29uc3QgTUFYX1BBWUxPQURfU0laRSA9IDEwMCAqIDEwMjQ7CgpmdW5jdGlvbiBfdXBsb2FkRmlsZXMoaW5wdXRJZCwgb3V0cHV0SWQpIHsKICBjb25zdCBzdGVwcyA9IHVwbG9hZEZpbGVzU3RlcChpbnB1dElkLCBvdXRwdXRJZCk7CiAgY29uc3Qgb3V0cHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKG91dHB1dElkKTsKICAvLyBDYWNoZSBzdGVwcyBvbiB0aGUgb3V0cHV0RWxlbWVudCB0byBtYWtlIGl0IGF2YWlsYWJsZSBmb3IgdGhlIG5leHQgY2FsbAogIC8vIHRvIHVwbG9hZEZpbGVzQ29udGludWUgZnJvbSBQeXRob24uCiAgb3V0cHV0RWxlbWVudC5zdGVwcyA9IHN0ZXBzOwoKICByZXR1cm4gX3VwbG9hZEZpbGVzQ29udGludWUob3V0cHV0SWQpOwp9CgovLyBUaGlzIGlzIHJvdWdobHkgYW4gYXN5bmMgZ2VuZXJhdG9yIChub3Qgc3VwcG9ydGVkIGluIHRoZSBicm93c2VyIHlldCksCi8vIHdoZXJlIHRoZXJlIGFyZSBtdWx0aXBsZSBhc3luY2hyb25vdXMgc3RlcHMgYW5kIHRoZSBQeXRob24gc2lkZSBpcyBnb2luZwovLyB0byBwb2xsIGZvciBjb21wbGV0aW9uIG9mIGVhY2ggc3RlcC4KLy8gVGhpcyB1c2VzIGEgUHJvbWlzZSB0byBibG9jayB0aGUgcHl0aG9uIHNpZGUgb24gY29tcGxldGlvbiBvZiBlYWNoIHN0ZXAsCi8vIHRoZW4gcGFzc2VzIHRoZSByZXN1bHQgb2YgdGhlIHByZXZpb3VzIHN0ZXAgYXMgdGhlIGlucHV0IHRvIHRoZSBuZXh0IHN0ZXAuCmZ1bmN0aW9uIF91cGxvYWRGaWxlc0NvbnRpbnVlKG91dHB1dElkKSB7CiAgY29uc3Qgb3V0cHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKG91dHB1dElkKTsKICBjb25zdCBzdGVwcyA9IG91dHB1dEVsZW1lbnQuc3RlcHM7CgogIGNvbnN0IG5leHQgPSBzdGVwcy5uZXh0KG91dHB1dEVsZW1lbnQubGFzdFByb21pc2VWYWx1ZSk7CiAgcmV0dXJuIFByb21pc2UucmVzb2x2ZShuZXh0LnZhbHVlLnByb21pc2UpLnRoZW4oKHZhbHVlKSA9PiB7CiAgICAvLyBDYWNoZSB0aGUgbGFzdCBwcm9taXNlIHZhbHVlIHRvIG1ha2UgaXQgYXZhaWxhYmxlIHRvIHRoZSBuZXh0CiAgICAvLyBzdGVwIG9mIHRoZSBnZW5lcmF0b3IuCiAgICBvdXRwdXRFbGVtZW50Lmxhc3RQcm9taXNlVmFsdWUgPSB2YWx1ZTsKICAgIHJldHVybiBuZXh0LnZhbHVlLnJlc3BvbnNlOwogIH0pOwp9CgovKioKICogR2VuZXJhdG9yIGZ1bmN0aW9uIHdoaWNoIGlzIGNhbGxlZCBiZXR3ZWVuIGVhY2ggYXN5bmMgc3RlcCBvZiB0aGUgdXBsb2FkCiAqIHByb2Nlc3MuCiAqIEBwYXJhbSB7c3RyaW5nfSBpbnB1dElkIEVsZW1lbnQgSUQgb2YgdGhlIGlucHV0IGZpbGUgcGlja2VyIGVsZW1lbnQuCiAqIEBwYXJhbSB7c3RyaW5nfSBvdXRwdXRJZCBFbGVtZW50IElEIG9mIHRoZSBvdXRwdXQgZGlzcGxheS4KICogQHJldHVybiB7IUl0ZXJhYmxlPCFPYmplY3Q+fSBJdGVyYWJsZSBvZiBuZXh0IHN0ZXBzLgogKi8KZnVuY3Rpb24qIHVwbG9hZEZpbGVzU3RlcChpbnB1dElkLCBvdXRwdXRJZCkgewogIGNvbnN0IGlucHV0RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKGlucHV0SWQpOwogIGlucHV0RWxlbWVudC5kaXNhYmxlZCA9IGZhbHNlOwoKICBjb25zdCBvdXRwdXRFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQob3V0cHV0SWQpOwogIG91dHB1dEVsZW1lbnQuaW5uZXJIVE1MID0gJyc7CgogIGNvbnN0IHBpY2tlZFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgaW5wdXRFbGVtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2NoYW5nZScsIChlKSA9PiB7CiAgICAgIHJlc29sdmUoZS50YXJnZXQuZmlsZXMpOwogICAgfSk7CiAgfSk7CgogIGNvbnN0IGNhbmNlbCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2J1dHRvbicpOwogIGlucHV0RWxlbWVudC5wYXJlbnRFbGVtZW50LmFwcGVuZENoaWxkKGNhbmNlbCk7CiAgY2FuY2VsLnRleHRDb250ZW50ID0gJ0NhbmNlbCB1cGxvYWQnOwogIGNvbnN0IGNhbmNlbFByb21pc2UgPSBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgY2FuY2VsLm9uY2xpY2sgPSAoKSA9PiB7CiAgICAgIHJlc29sdmUobnVsbCk7CiAgICB9OwogIH0pOwoKICAvLyBXYWl0IGZvciB0aGUgdXNlciB0byBwaWNrIHRoZSBmaWxlcy4KICBjb25zdCBmaWxlcyA9IHlpZWxkIHsKICAgIHByb21pc2U6IFByb21pc2UucmFjZShbcGlja2VkUHJvbWlzZSwgY2FuY2VsUHJvbWlzZV0pLAogICAgcmVzcG9uc2U6IHsKICAgICAgYWN0aW9uOiAnc3RhcnRpbmcnLAogICAgfQogIH07CgogIGNhbmNlbC5yZW1vdmUoKTsKCiAgLy8gRGlzYWJsZSB0aGUgaW5wdXQgZWxlbWVudCBzaW5jZSBmdXJ0aGVyIHBpY2tzIGFyZSBub3QgYWxsb3dlZC4KICBpbnB1dEVsZW1lbnQuZGlzYWJsZWQgPSB0cnVlOwoKICBpZiAoIWZpbGVzKSB7CiAgICByZXR1cm4gewogICAgICByZXNwb25zZTogewogICAgICAgIGFjdGlvbjogJ2NvbXBsZXRlJywKICAgICAgfQogICAgfTsKICB9CgogIGZvciAoY29uc3QgZmlsZSBvZiBmaWxlcykgewogICAgY29uc3QgbGkgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdsaScpOwogICAgbGkuYXBwZW5kKHNwYW4oZmlsZS5uYW1lLCB7Zm9udFdlaWdodDogJ2JvbGQnfSkpOwogICAgbGkuYXBwZW5kKHNwYW4oCiAgICAgICAgYCgke2ZpbGUudHlwZSB8fCAnbi9hJ30pIC0gJHtmaWxlLnNpemV9IGJ5dGVzLCBgICsKICAgICAgICBgbGFzdCBtb2RpZmllZDogJHsKICAgICAgICAgICAgZmlsZS5sYXN0TW9kaWZpZWREYXRlID8gZmlsZS5sYXN0TW9kaWZpZWREYXRlLnRvTG9jYWxlRGF0ZVN0cmluZygpIDoKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJ24vYSd9IC0gYCkpOwogICAgY29uc3QgcGVyY2VudCA9IHNwYW4oJzAlIGRvbmUnKTsKICAgIGxpLmFwcGVuZENoaWxkKHBlcmNlbnQpOwoKICAgIG91dHB1dEVsZW1lbnQuYXBwZW5kQ2hpbGQobGkpOwoKICAgIGNvbnN0IGZpbGVEYXRhUHJvbWlzZSA9IG5ldyBQcm9taXNlKChyZXNvbHZlKSA9PiB7CiAgICAgIGNvbnN0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7CiAgICAgIHJlYWRlci5vbmxvYWQgPSAoZSkgPT4gewogICAgICAgIHJlc29sdmUoZS50YXJnZXQucmVzdWx0KTsKICAgICAgfTsKICAgICAgcmVhZGVyLnJlYWRBc0FycmF5QnVmZmVyKGZpbGUpOwogICAgfSk7CiAgICAvLyBXYWl0IGZvciB0aGUgZGF0YSB0byBiZSByZWFkeS4KICAgIGxldCBmaWxlRGF0YSA9IHlpZWxkIHsKICAgICAgcHJvbWlzZTogZmlsZURhdGFQcm9taXNlLAogICAgICByZXNwb25zZTogewogICAgICAgIGFjdGlvbjogJ2NvbnRpbnVlJywKICAgICAgfQogICAgfTsKCiAgICAvLyBVc2UgYSBjaHVua2VkIHNlbmRpbmcgdG8gYXZvaWQgbWVzc2FnZSBzaXplIGxpbWl0cy4gU2VlIGIvNjIxMTU2NjAuCiAgICBsZXQgcG9zaXRpb24gPSAwOwogICAgd2hpbGUgKHBvc2l0aW9uIDwgZmlsZURhdGEuYnl0ZUxlbmd0aCkgewogICAgICBjb25zdCBsZW5ndGggPSBNYXRoLm1pbihmaWxlRGF0YS5ieXRlTGVuZ3RoIC0gcG9zaXRpb24sIE1BWF9QQVlMT0FEX1NJWkUpOwogICAgICBjb25zdCBjaHVuayA9IG5ldyBVaW50OEFycmF5KGZpbGVEYXRhLCBwb3NpdGlvbiwgbGVuZ3RoKTsKICAgICAgcG9zaXRpb24gKz0gbGVuZ3RoOwoKICAgICAgY29uc3QgYmFzZTY0ID0gYnRvYShTdHJpbmcuZnJvbUNoYXJDb2RlLmFwcGx5KG51bGwsIGNodW5rKSk7CiAgICAgIHlpZWxkIHsKICAgICAgICByZXNwb25zZTogewogICAgICAgICAgYWN0aW9uOiAnYXBwZW5kJywKICAgICAgICAgIGZpbGU6IGZpbGUubmFtZSwKICAgICAgICAgIGRhdGE6IGJhc2U2NCwKICAgICAgICB9LAogICAgICB9OwogICAgICBwZXJjZW50LnRleHRDb250ZW50ID0KICAgICAgICAgIGAke01hdGgucm91bmQoKHBvc2l0aW9uIC8gZmlsZURhdGEuYnl0ZUxlbmd0aCkgKiAxMDApfSUgZG9uZWA7CiAgICB9CiAgfQoKICAvLyBBbGwgZG9uZS4KICB5aWVsZCB7CiAgICByZXNwb25zZTogewogICAgICBhY3Rpb246ICdjb21wbGV0ZScsCiAgICB9CiAgfTsKfQoKc2NvcGUuZ29vZ2xlID0gc2NvcGUuZ29vZ2xlIHx8IHt9OwpzY29wZS5nb29nbGUuY29sYWIgPSBzY29wZS5nb29nbGUuY29sYWIgfHwge307CnNjb3BlLmdvb2dsZS5jb2xhYi5fZmlsZXMgPSB7CiAgX3VwbG9hZEZpbGVzLAogIF91cGxvYWRGaWxlc0NvbnRpbnVlLAp9Owp9KShzZWxmKTsK",
+       "headers": [
+        [
+         "content-type",
+         "application/javascript"
+        ]
+       ],
+       "ok": true,
+       "status": 200,
+       "status_text": ""
+      }
+     }
+    },
+    "id": "m61tRdMEIugv",
+    "outputId": "7aa30095-d698-479f-f091-d51a14613916"
+   },
+   "outputs": [],
+   "source": [
+    "from google.colab import files\n",
+    "uploaded = files.upload()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "UjwNqPsWIVGF"
+   },
+   "source": [
+    "2. Import Library"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {
+    "id": "7bOLZhFwIVGF"
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import seaborn as sns\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import classification_report\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.metrics import roc_auc_score\n",
+    "from sklearn.model_selection import GridSearchCV "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "MiDG-nScIVGJ"
+   },
+   "source": [
+    "3. Load the Dataset into a frame"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {
+    "id": "TiDCi37HIVGK"
+   },
+   "outputs": [],
+   "source": [
+    "df = pd.read_csv('data.csv')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "QiEzRnZ3IVGN"
+   },
+   "source": [
+    "4. Print the description, dimensions and first five records of the frame."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 568
+    },
+    "id": "90xcAOw4IVGN",
+    "outputId": "52b9d360-853d-470d-f864-0b4bc999870b"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 303 entries, 0 to 302\n",
+      "Data columns (total 14 columns):\n",
+      " #   Column    Non-Null Count  Dtype  \n",
+      "---  ------    --------------  -----  \n",
+      " 0   age       303 non-null    int64  \n",
+      " 1   sex       303 non-null    int64  \n",
+      " 2   cp        303 non-null    int64  \n",
+      " 3   trestbps  303 non-null    int64  \n",
+      " 4   chol      303 non-null    int64  \n",
+      " 5   fbs       303 non-null    int64  \n",
+      " 6   restecg   303 non-null    int64  \n",
+      " 7   thalach   303 non-null    int64  \n",
+      " 8   exang     303 non-null    int64  \n",
+      " 9   oldpeak   303 non-null    float64\n",
+      " 10  slope     303 non-null    int64  \n",
+      " 11  ca        303 non-null    int64  \n",
+      " 12  thal      303 non-null    int64  \n",
+      " 13  target    303 non-null    int64  \n",
+      "dtypes: float64(1), int64(13)\n",
+      "memory usage: 33.3 KB\n",
+      "None\n",
+      "(303, 14)\n",
+      "   age  sex  cp  trestbps  chol  fbs  restecg  thalach  exang  oldpeak  slope  \\\n",
+      "0   63    1   3       145   233    1        0      150      0      2.3      0   \n",
+      "1   37    1   2       130   250    0        1      187      0      3.5      0   \n",
+      "2   41    0   1       130   204    0        0      172      0      1.4      2   \n",
+      "3   56    1   1       120   236    0        1      178      0      0.8      2   \n",
+      "4   57    0   0       120   354    0        1      163      1      0.6      2   \n",
+      "\n",
+      "   ca  thal  target  \n",
+      "0   0     1       1  \n",
+      "1   0     2       1  \n",
+      "2   0     2       1  \n",
+      "3   0     2       1  \n",
+      "4   0     2       1  \n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.info())\n",
+    "print(df.shape)\n",
+    "print(df.head())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "EjhhbVh3IVGY"
+   },
+   "source": [
+    "5. Check whether the data has any  missing value in any column. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 274
+    },
+    "id": "2my77G9GIVGY",
+    "outputId": "595524e4-057f-4d66-c7bd-a34931bdc674"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "age         0\n",
+       "sex         0\n",
+       "cp          0\n",
+       "trestbps    0\n",
+       "chol        0\n",
+       "fbs         0\n",
+       "restecg     0\n",
+       "thalach     0\n",
+       "exang       0\n",
+       "oldpeak     0\n",
+       "slope       0\n",
+       "ca          0\n",
+       "thal        0\n",
+       "target      0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "Fq7Ax5mCIVGb"
+   },
+   "source": [
+    "6. Check whether the data has balanced class distribution. Class target = 0 indicates \"Heart Disease\" and target = 1 indicates \"No Heart Disease\". "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 296
+    },
+    "id": "jHwd7v2kIVGb",
+    "outputId": "88fd234f-8310-4252-8b1e-84114aa51a88"
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Admin\\anaconda3\\lib\\site-packages\\seaborn\\_decorators.py:36: FutureWarning: Pass the following variable as a keyword arg: x. From version 0.12, the only valid positional argument will be `data`, and passing other arguments without an explicit keyword will result in an error or misinterpretation.\n",
+      "  warnings.warn(\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<AxesSubplot:xlabel='target', ylabel='count'>"
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.countplot(df['target'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "dIV5cV59IVHR"
+   },
+   "source": [
+    "7. Create input features X, target Y, classifier object, train-test-split using 80-20% split "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {
+    "id": "j69LCT0tIVHR"
+   },
+   "outputs": [],
+   "source": [
+    "x = df.drop(columns=['target'])\n",
+    "y = df['target']\n",
+    "knn = KNeighborsClassifier()\n",
+    "x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=4)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "Ap1vIJImOkL2"
+   },
+   "source": [
+    "8. Train model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 68
+    },
+    "id": "ya0cLL_pIVHZ",
+    "outputId": "ca80b399-fe4a-4fc4-9ea4-da4d522ec189"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "KNeighborsClassifier()"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Training the model\n",
+    "knn.fit(x_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "ogHHC9aGOvjP"
+   },
+   "source": [
+    "9. Validate model on test set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {
+    "id": "0uSOijqwIVHc"
+   },
+   "outputs": [],
+   "source": [
+    "y_pred = knn.predict(x_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "wYTA92JxO3Q4"
+   },
+   "source": [
+    "10. Print Classification Report on test data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 171
+    },
+    "id": "6p3gGQlNIVHg",
+    "outputId": "4f78d5c1-942f-4955-d084-6d0f7eb1f787"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.48      0.52      0.50        25\n",
+      "           1       0.65      0.61      0.63        36\n",
+      "\n",
+      "    accuracy                           0.57        61\n",
+      "   macro avg       0.56      0.57      0.56        61\n",
+      "weighted avg       0.58      0.57      0.58        61\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(classification_report(y_test, y_pred))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "ymxOm0rEPNo0"
+   },
+   "source": [
+    "11. Print AUC score on test data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "id": "7A9n0zhPIVHl",
+    "outputId": "e1f58cf7-ce51-4ef1-da51-d8d6cee85771",
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.5655555555555556"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "roc_auc_score(y_test, y_pred)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "mifivQaTPjAL"
+   },
+   "source": [
+    "The performance of the model is vey poor. Hence hyperparameters of kNN to be tuned using GridSearchCV."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "m9Fqa69yWH39"
+   },
+   "source": [
+    "12. Hyperparameter tuning using GridSearchCV. Set the parameters a)leaf-size= 1 to 15, b)n_neighbors = 1 to 10 and c) distance metric, p = 1, 2. When p =1 its Manhattan and p = 2 its Euclidean distance. GridSearchCV uses CV to search for the optimal values of the hyperparameters. It accepts the hyperparameters as a dictionary.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "leaf size\n",
+    "\n",
+    "\n",
+    "*reduces the time consumption in training model.\n",
+    "\n",
+    "\n",
+    "*larger the leaf_size better the model\n",
+    "\n",
+    "\n",
+    "n_neighbors:\n",
+    "\n",
+    "\n",
+    "*selects the number of neighbors for model\n",
+    "\n",
+    "\n",
+    "p:\n",
+    "\n",
+    "\n",
+    "*it's a distance parameter \n",
+    "\n",
+    "\n",
+    "gridsearch cv:\n",
+    "\n",
+    "*used to perform hyperparameter tuning in order to find the optimal paramters for the model.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {
+    "id": "zd1oJhSxIVHs"
+   },
+   "outputs": [],
+   "source": [
+    "leaf_size = list(range(1,15))\n",
+    "n_neighbors = list(range(1,10))\n",
+    "p=[1,2]   \n",
+    "hyperparameters = dict(leaf_size=leaf_size, n_neighbors=n_neighbors, p=p)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "eJrKb9uYWtP3"
+   },
+   "source": [
+    "13. Train a new kNN model using GridSearchCV."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {
+    "id": "Ww7ZPN6QIVH1"
+   },
+   "outputs": [],
+   "source": [
+    "knn_2 = KNeighborsClassifier()\n",
+    "clf = GridSearchCV(knn_2, hyperparameters, cv=10, scoring = 'roc_auc')\n",
+    "best_model = clf.fit(x,y)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "VM26OEDycQ2h"
+   },
+   "source": [
+    "14. Print the best values of the hyperparameters."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 85
+    },
+    "id": "YYvcf04pIVIH",
+    "outputId": "dd3d0fe9-54df-4aba-efc1-9dcad2343641"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Best leaf_size: 9\n",
+      "Best p: 1\n",
+      "Best n_neighbors: 7\n",
+      "Best Score: 0.7488000969618617\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Nilai hyperparameters terbaik\n",
+    "print('Best leaf_size:', best_model.best_estimator_.get_params()['leaf_size'])\n",
+    "print('Best p:', best_model.best_estimator_.get_params()['p'])\n",
+    "print('Best n_neighbors:', best_model.best_estimator_.get_params()['n_neighbors'])\n",
+    "print('Best Score:', best_model.best_score_)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "SgFBHtr9chzV"
+   },
+   "source": [
+    "15. Validate the model on test data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {
+    "id": "qQhJPSV7IVIK"
+   },
+   "outputs": [],
+   "source": [
+    "y_pred = best_model.predict(x_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "id": "SM9DQx8Gco0Q"
+   },
+   "source": [
+    "16. Print classification report and AUC score of the model on test data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 188
+    },
+    "id": "pSov0O07IVIN",
+    "outputId": "8720eca7-67ee-4e47-b1ea-6cf1b9a60bfc"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "           0       0.72      0.72      0.72        25\n",
+      "           1       0.81      0.81      0.81        36\n",
+      "\n",
+      "    accuracy                           0.77        61\n",
+      "   macro avg       0.76      0.76      0.76        61\n",
+      "weighted avg       0.77      0.77      0.77        61\n",
+      "\n",
+      "AUC SCORE is 0.7627777777777778\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(classification_report(y_test, y_pred))\n",
+    "print(\"AUC SCORE is\",roc_auc_score(y_test, y_pred))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "collapsed_sections": [],
+   "name": "Lab8_kNN_GridSearchCV (1).ipynb",
+   "provenance": []
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
